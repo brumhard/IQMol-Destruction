@@ -30,7 +30,7 @@
   > this doesnt return proper exit codes -> use harness as described in [fuzzing files](#fuzzing-files)
 
 ## fuzzing files
-- [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run qmake & make, which will result in a minimal Parser harness `./Parser`
+- [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run `qmake` & `make`, which will result in a minimal Parser harness `./Parser`
 
 ## general notes
 
