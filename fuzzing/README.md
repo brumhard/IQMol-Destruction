@@ -1,7 +1,7 @@
 # IQMol Fuzzing
 
 
-### installation notes
+## installation notes
 
 - apt install g++ git gfortran cmake qt5-default libssl-dev openssl libssh2-1-dev libboost-dev libboost-serialization-dev libboost-iostreams-dev libopenbabel-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev
 > Parser.pro imports common.pri, linux.pri
@@ -19,14 +19,18 @@
   - qmake IQmol.pro
   - make
 - this will result in the executable "IQmol" in the root dir
+- assets: sudo mkdir /usr/share/iqmol
+  > not sure if needed
+  - sudo mkdir /usr/share/iqmol
+  - sudo cp -R ../share/\* /usr/share/iqmol
 - to build standalone parser:
   > src/Parser/ contains Readme which states that you need to uncomment a line in Parser.pro, this doesnt seem to have any effect
   - instead go to src/Parser/test and then run qmake, make to get a Parser executable in the test dir
   - run with `./Parser -platform offscreen` for headless mode
-  - TODO: add return 1 for failed parse in main Parser method (line 189?)
-- assets: sudo mkdir /usr/share/iqmol (TODO: check if needed)
-  - sudo mkdir /usr/share/iqmol
-  - sudo cp -R ../share/\* /usr/share/iqmol
+  > this doesnt return proper exit codes -> use harness as described in [fuzzing files](#fuzzing-files)
+
+## fuzzing files
+- [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run qmake & make, which will result in a minimal Parser harness `./Parser`
 
 ## general notes
 
