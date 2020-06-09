@@ -3,7 +3,8 @@
 
 ## installation notes
 
-- apt install g++ git gfortran cmake qt5-default libssl-dev openssl libssh2-1-dev libboost-dev libboost-serialization-dev libboost-iostreams-dev libopenbabel-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev
+- `git clone https://github.com/nutjunkie/IQmol.git`
+- `sudo apt install g++ git gfortran cmake qt5-default libssl-dev openssl libssh2-1-dev libboost-dev libboost-serialization-dev libboost-iostreams-dev libopenbabel-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev`
 > Parser.pro imports common.pri, linux.pri
 - fortran build in src/Main:
   - `gfortran -c symmol.f90`
@@ -19,10 +20,6 @@
   - qmake IQmol.pro
   - make
 - this will result in the executable "IQmol" in the root dir
-- assets: sudo mkdir /usr/share/iqmol
-  > not sure if needed
-  - sudo mkdir /usr/share/iqmol
-  - sudo cp -R ../share/\* /usr/share/iqmol
 - to build standalone parser:
   > src/Parser/ contains Readme which states that you need to uncomment a line in Parser.pro, this doesnt seem to have any effect
   - instead go to src/Parser/test and then run qmake, make to get a Parser executable in the test dir
@@ -31,6 +28,57 @@
 
 ## fuzzing files
 - [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run `qmake` & `make`, which will result in a minimal Parser harness `./Parser`
+
+
+## afl instructions
+- Prepare the OS for AFL
+  - `echo core | sudo tee /proc/sys/kernel/core_pattern`
+  - `echo 0 | sudo tee /proc/sys/kernel/randomize_va_space`
+- clone afl++ repo: `git clone https://github.com/AFLplusplus/AFLplusplus.git`
+- requirements: `sudo apt install build-essential libtool-bin python3-dev automake autoconf flex bison libglib2.0-dev libpixman-1-dev clang python3-setuptools llvm`
+- build with clang fast: `LLVM_CONFIG=llvm-config-9 make distrib` or maybe change version according to your clang version
+- restart shell to update path
+- install to path: `sudo make install`
+- restart shell
+- enter the following:
+  ```
+  QMAKE_CC=afl-clang-fast
+  QMAKE_CXX=afl-clang-fast++  
+  ```
+  into linux.pri in src
+  and compiler.include in OpenMesh/qmake (replace here)
+- as these files are included in all pro files, this should transport the compiler options to all makefiles
+  - umcomment `QMAKE_CXXFLAGS += -O2 -g -ggdb` in common.pri ???????
+  - AFL_USE_ASAN=1 ???
+- add the following
+  ```
+    OPTION += create_prl
+    OPTION += static
+    # same as -static option?
+  ```
+  into same as above
+- config linker: add:
+  ```
+  blablablablabl
+  ```
+  TODO: Add resulting linux pri & compiler include to repo
+- openbabel shit: 
+- build: `make clean all`
+
+## (installation 2) FUCK THIS
+- download QT: `wget http://download.qt.io/official_releases/qt/5.15/5.15.0/single/qt-everywhere-src-5.15.0.tar.xz`
+  - unpack: `tar xvf qt-everywhere-src-5.15.0.tar.xz`
+  - `./configure`
+  - `make`
+  - `make install`
+  - -> qt installation no available in `/usr/local/Qt-5.15.0`
+- download openbabel: `wget https://github.com/openbabel/openbabel/releases/download/openbabel-3-1-1/openbabel-3.1.1-source.tar.bz2`
+  - unpack: `tar xvf openbabel-3.1.1-source.tar.bz2`
+  - `mkdir build && cd build`
+  - `cmake ../`
+  - `make`
+  - `sudo make install`
+- set Openbabel path in linux pri (DEV would be ~/temp/???) nope nopedinopenope vielleicht dochj
 
 ## general notes
 
