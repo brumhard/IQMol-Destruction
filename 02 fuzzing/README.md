@@ -1,6 +1,5 @@
 # IQMol Fuzzing
 
-
 ## installation notes
 > this uses the normal compiler, look [here](#afl-instructions) for afl compiling
 - `git clone https://github.com/nutjunkie/IQmol.git`
@@ -21,10 +20,12 @@
   - make
 - this will result in the executable "IQmol" in the root dir
 - to build standalone parser:
+  > !!! outdated see [here](#parser-standalone-instructions)
   > src/Parser/ contains Readme which states that you need to uncomment a line in Parser.pro, this doesnt seem to have any effect
   - instead go to src/Parser/test and then run qmake, make to get a Parser executable in the test dir
   - run with `./Parser -platform offscreen` for headless mode
   > this doesnt return proper exit codes -> use harness as described in [fuzzing files](#fuzzing-files)
+
 
 ## fuzzing files
 - [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run `qmake` & `make`, which will result in a minimal Parser harness `./Parser`
@@ -49,19 +50,13 @@
   into linux.pri in src
 - comment out QMAKE_CC and QMAKE_CCX options in compiler.include
 - as these files are included in all pro files, this should transport the compiler options to all makefiles
-  - umcomment `QMAKE_CXXFLAGS += -O2 -g -ggdb` in common.pri ???????
-  - AFL_USE_ASAN=1 ???
-- add the following
-  ```
-    OPTION += create_prl
-    OPTION += static
-    # same as -static option?
-  ```
-  into same as above
-- TODO: Add resulting linux pri & compiler include to repo
 - build: `make clean all`
 
-# instructions for prod:
+## parser standalone instructions
+- take [harness](harness.C), rename to `main.C` and replace `main.C` in src/Main
+- build with afl as described in [afl instructions](#afl-instructions)
+
+## instructions for prod:
 - download openbabel: `wget https://github.com/openbabel/openbabel/releases/download/openbabel-3-1-1/openbabel-3.1.1-source.tar.bz2`
 - unpack: `tar xvf openbabel-3.1.1-source.tar.bz2`
 - `mkdir build && cd build`
@@ -76,7 +71,6 @@
     LIBS        += -lopenbabel
   ```
 - make sure that in the first 2 lines of linux.pri deploy is enabled and develop is commented
-- TODO: resulting prod pri in repo
 
 ## (installation 2) FUCK THIS
 - download QT: `wget http://download.qt.io/official_releases/qt/5.15/5.15.0/single/qt-everywhere-src-5.15.0.tar.xz`
@@ -89,9 +83,7 @@
 ## general notes
 - samples in samples/ and src/Parser/test/samples
 - even problem files folder: src/Parser/test/problems
-
 - cml file: https://fileinfo.com/extension/cml#:~:text=What%20is%20a%20CML%20file,exchanging%20and%20archiving%20chemical%20data. as additional fuzzing target?
-
 - uses openbabel file parsers -> https://github.com/openbabel/openbabel/search?q=ReadMolecule+in%3Afile&unscoped_q=ReadMolecule+in%3Afile
   - all file parsers here implement `ReadMolecule` method
   - this is needed in openbabel/obconversion.h and obconversion. where all formats are registered
