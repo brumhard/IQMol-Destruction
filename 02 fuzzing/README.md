@@ -2,20 +2,20 @@
 
 
 ## installation notes
-
+> this uses the normal compiler, look [here](#afl-instructions) for afl compiling
 - `git clone https://github.com/nutjunkie/IQmol.git`
 - `sudo apt install g++ git gfortran cmake qt5-default libssl-dev openssl libssh2-1-dev libboost-dev libboost-serialization-dev libboost-iostreams-dev libopenbabel-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev`
-> Parser.pro imports common.pri, linux.pri
+> every pro file imports common.pri, linux.pri -> make config changes here
 - fortran build in src/Main:
-  - `gfortran -c symmol.f90`
-  - move resulting symmol.o from src/Main to build
+  - `gfortran -c Main/symmol.f90`
+  - move resulting symmol.o from src/Main to build: `cp Main/symmol.o ../build`
 - in linux.pri:
-  - uncomment CONFIG += DEVELOP in line 2 -> TODO: download newer qt and get it to work with prod settings
+  - uncomment CONFIG += DEVELOP in line 2 -> to get it to work with prod/deploy settings, see [here](#instructions-for-prod)
   - comment CONFIG += DEPLOY, otherwise openbabel is required in DEV path
   - gfortran libs are not up to date ->
     - /usr/lib/gcc/x86_64-linux-gnu/5/libgfortran.a -> /usr/lib/gcc/x86_64-linux-gnu/7/libgfortran.a
     - /usr/lib/gcc/x86_64-linux-gnu/5/libquadmath.a -> /usr/lib/gcc/x86_64-linux-gnu/7/libquadmath.a
-  > you can also copy the linux.rpi file contained in this repo to src/ and replace the old one 
+  > you can also copy the [linux.rpi](linux.pri) file contained in this repo to src/ and replace the old one 
 - in src:
   - qmake IQmol.pro
   - make
@@ -35,7 +35,7 @@
   - `echo core | sudo tee /proc/sys/kernel/core_pattern`
   - `echo 0 | sudo tee /proc/sys/kernel/randomize_va_space`
 - clone afl++ repo: `git clone https://github.com/AFLplusplus/AFLplusplus.git`
-- requirements: `sudo apt install build-essential libtool-bin python3-dev automake autoconf flex bison libglib2.0-dev libpixman-1-dev clang python3-setuptools llvm`
+- requirements: `sudo apt install build-essential libtool-bin python3-dev automake autoconf flex bison libglib2.0-dev libpixman-1-dev clang python3-setuptools llvm clang-9`
 - build with clang fast: `LLVM_CONFIG=llvm-config-9 make distrib` or maybe change version according to your clang version
 - restart shell to update path
 - install to path: `sudo make install`
@@ -44,9 +44,10 @@
   ```
   QMAKE_CC=afl-clang-fast
   QMAKE_CXX=afl-clang-fast++  
+  QMAKE_LINK=afl-clang-fast++
   ```
   into linux.pri in src
-  and compiler.include in OpenMesh/qmake (replace here)
+- comment out QMAKE_CC and QMAKE_CCX options in compiler.include
 - as these files are included in all pro files, this should transport the compiler options to all makefiles
   - umcomment `QMAKE_CXXFLAGS += -O2 -g -ggdb` in common.pri ???????
   - AFL_USE_ASAN=1 ???
@@ -57,13 +58,25 @@
     # same as -static option?
   ```
   into same as above
-- config linker: add:
-  ```
-  blablablablabl
-  ```
-  TODO: Add resulting linux pri & compiler include to repo
-- openbabel shit: 
+- TODO: Add resulting linux pri & compiler include to repo
 - build: `make clean all`
+
+# instructions for prod:
+- download openbabel: `wget https://github.com/openbabel/openbabel/releases/download/openbabel-3-1-1/openbabel-3.1.1-source.tar.bz2`
+- unpack: `tar xvf openbabel-3.1.1-source.tar.bz2`
+- `mkdir build && cd build`
+- `cmake ../`
+- `make`
+- `sudo make install`
+- copy `babelconfig.h` from `build/include/openbabel/babelconfig.h` to `include/openbabel/babelconfig.h`
+  - from root of openbabel: `cp build/include/openbabel/babelconfig.h include/openbabel/`
+- replace openbabel config in deploy section of linux pri to:
+  ```
+    INCLUDEPATH += <path to openbabel installation>
+    LIBS        += -lopenbabel
+  ```
+- make sure that in the first 2 lines of linux.pri deploy is enabled and develop is commented
+- TODO: resulting prod pri in repo
 
 ## (installation 2) FUCK THIS
 - download QT: `wget http://download.qt.io/official_releases/qt/5.15/5.15.0/single/qt-everywhere-src-5.15.0.tar.xz`
@@ -72,16 +85,8 @@
   - `make`
   - `make install`
   - -> qt installation no available in `/usr/local/Qt-5.15.0`
-- download openbabel: `wget https://github.com/openbabel/openbabel/releases/download/openbabel-3-1-1/openbabel-3.1.1-source.tar.bz2`
-  - unpack: `tar xvf openbabel-3.1.1-source.tar.bz2`
-  - `mkdir build && cd build`
-  - `cmake ../`
-  - `make`
-  - `sudo make install`
-- set Openbabel path in linux pri (DEV would be ~/temp/???) nope nopedinopenope vielleicht dochj
 
 ## general notes
-
 - samples in samples/ and src/Parser/test/samples
 - even problem files folder: src/Parser/test/problems
 

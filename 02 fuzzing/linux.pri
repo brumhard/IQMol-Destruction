@@ -1,12 +1,9 @@
 # CONFIG += DEPLOY
 CONFIG += DEVELOP
 
-
 QMAKE_CC=afl-clang-fast
-QMAKE_CXX=afl-clang-fast++ 
+QMAKE_CXX=afl-clang-fast++
 QMAKE_LINK=afl-clang-fast++
-OPTION += create_prl
-OPTION += static
 
 contains(CONFIG, DEVELOP){
    #message("---- DEVELOP set ----")
@@ -31,7 +28,7 @@ contains(CONFIG, DEVELOP){
    # Misc
    LIBS        += -lz -ldl
 
-   # QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\''
+   QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\''
 }
 
 
@@ -65,7 +62,7 @@ contains(CONFIG, DISTRIB) {
    # Misc
    LIBS        += -lz -ldl
 
-   # QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\'' 
+   QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\'' 
 }
  
 
@@ -102,5 +99,5 @@ contains(CONFIG, DEPLOY) {
    # Misc
    LIBS        += -lz -ldl
 
-   # QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\'' 
+   QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\'' 
 }
