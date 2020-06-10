@@ -1,5 +1,10 @@
 # IQMol Fuzzing
 
+
+## fuzzing files
+- [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run `qmake` & `make`, which will result in a minimal Parser harness `./Parser`
+- [new build config](linux.pri) see [installation notes](#installation-notes) and [afl instructions](#afl-instructions)
+
 ## installation notes
 > this uses the normal compiler, look [here](#afl-instructions) for afl compiling
 - `git clone https://github.com/nutjunkie/IQmol.git`
@@ -11,7 +16,7 @@
 - in linux.pri:
   - uncomment CONFIG += DEVELOP in line 2 -> to get it to work with prod/deploy settings, see [here](#instructions-for-prod)
   - comment CONFIG += DEPLOY, otherwise openbabel is required in DEV path
-  - gfortran libs are not up to date ->
+  - gfortran libs are not up to date -> rename all occurences:
     - /usr/lib/gcc/x86_64-linux-gnu/5/libgfortran.a -> /usr/lib/gcc/x86_64-linux-gnu/7/libgfortran.a
     - /usr/lib/gcc/x86_64-linux-gnu/5/libquadmath.a -> /usr/lib/gcc/x86_64-linux-gnu/7/libquadmath.a
   > you can also copy the [linux.rpi](linux.pri) file contained in this repo to src/ and replace the old one 
@@ -25,11 +30,6 @@
   - instead go to src/Parser/test and then run qmake, make to get a Parser executable in the test dir
   - run with `./Parser -platform offscreen` for headless mode
   > this doesnt return proper exit codes -> use harness as described in [fuzzing files](#fuzzing-files)
-
-
-## fuzzing files
-- [harness](harness.C): copy to `src/Parser/test` and rename to main.C; then run `qmake` & `make`, which will result in a minimal Parser harness `./Parser`
-
 
 ## afl instructions
 - Prepare the OS for AFL
@@ -72,7 +72,20 @@
   ```
 - make sure that in the first 2 lines of linux.pri deploy is enabled and develop is commented
 
-## (installation 2) FUCK THIS
+## fuzzing instructions
+- make machine rdy: run `sudo afl-system-config`
+- create needed dirs eg. in IQmol repo root
+  - `mkdir fuzzing fuzzing/in fuzzing/out fuzzing/in_min`
+- copy all sample files to 
+  - `cp samples/* fuzzing/in/`
+  - `cp src/Parser/test/problems/* fuzzing/in/`
+  - `cp src/Parser/test/samples/ fuzzing/in/`
+- copy build main to fuzzing dir: `cp IQmol fuzzing/parser`
+- minimize corpus `afl-cmin -i in -o in_min -m none -- ./parser @@`
+- run fuzzer `afl-fuzz -i in_min/ -o out/ -m none -- ./parser @@`
+
+## qt installation/ build
+> this doesnt seem to be essential
 - download QT: `wget http://download.qt.io/official_releases/qt/5.15/5.15.0/single/qt-everywhere-src-5.15.0.tar.xz`
   - unpack: `tar xvf qt-everywhere-src-5.15.0.tar.xz`
   - `./configure`
@@ -89,3 +102,11 @@
   - this is needed in openbabel/obconversion.h and obconversion. where all formats are registered
   - used in `OBConversion::Read` in obconversion.cpp
   - also implements own xml parser? https://github.com/openbabel/openbabel/blob/66042e0d98ff75556a1a52e3fc0ce1a2ec76d2fd/src/formats/xml/xml.cpp
+
+## openbabel
+- wget https://github.com/openbabel/openbabel/archive/openbabel-2-4-1.tar.gz
+- tar xzf openbabel-2-4-1.tar.gz
+- mkdir build
+- cd build
+- CC=afl-clang-fast CXX=afl-clang-fast++ cmake -DBUILD_SHARED=OFF ..
+- make
