@@ -72,18 +72,6 @@
   ```
 - make sure that in the first 2 lines of linux.pri deploy is enabled and develop is commented
 
-## fuzzing instructions
-- make machine rdy: run `sudo afl-system-config`
-- create needed dirs eg. in IQmol repo root
-  - `mkdir fuzzing fuzzing/in fuzzing/out fuzzing/in_min`
-- copy all sample files to 
-  - `cp samples/* fuzzing/in/`
-  - `cp src/Parser/test/problems/* fuzzing/in/`
-  - `cp src/Parser/test/samples/ fuzzing/in/`
-- copy build main to fuzzing dir: `cp IQmol fuzzing/parser`
-- minimize corpus `afl-cmin -i in -o in_min -m none -- ./parser @@`
-- run fuzzer `afl-fuzz -i in_min/ -o out/ -m none -- ./parser @@`
-
 ## qt installation/ build
 > this doesnt seem to be essential
 - download QT: `wget http://download.qt.io/official_releases/qt/5.15/5.15.0/single/qt-everywhere-src-5.15.0.tar.xz`
