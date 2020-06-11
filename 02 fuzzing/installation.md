@@ -104,9 +104,10 @@
   - also implements own xml parser? https://github.com/openbabel/openbabel/blob/66042e0d98ff75556a1a52e3fc0ce1a2ec76d2fd/src/formats/xml/xml.cpp
 
 ## openbabel
+> this doesnt work i guess, produces address sanitizer bugs
 - wget https://github.com/openbabel/openbabel/archive/openbabel-2-4-1.tar.gz
 - tar xzf openbabel-2-4-1.tar.gz
 - mkdir build
 - cd build
-- CC=afl-clang-fast CXX=afl-clang-fast++ cmake -DBUILD_SHARED=OFF ..
+- CC=afl-clang-fast CXX=afl-clang-fast++ cmake -static ..
 - make
