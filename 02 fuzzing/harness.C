@@ -1,12 +1,21 @@
+
 // harness for fuzzing of xyz files
 // replace parser variable with any other parser (found in ParseFile.C) to fuzz other formats
 
 #include "XyzParser.h"
+#include <string>
 using namespace IQmol::Parser;
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-    Base *parser = new Xyz;
-    QString input = QString::fromStdString(argv[1]);
-    return int(parser->parseFile(input));
+    __AFL_INIT();
+
+    while (__AFL_LOOP(1000))
+    {
+        Base *parser = new Xyz;
+        // std::string inputBufString(reinterpret_cast<char const *>(buf));
+        QString input = QString::fromStdString(argv[1]);
+        parser->parseFile(input);
+    }
+    return 0;
 }

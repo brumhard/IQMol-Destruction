@@ -29,8 +29,10 @@
 - fuzzing xyz files with just "a" as input finds unique hangs
 
 ## TODO
-- [ ] minimize harness to point to one parser statically
+- [x] minimize harness to point to one parser statically
+- [x] deferred fork server & persistent mode
 - [ ] harness read from stdin
+- [ ] harness read from shared memory as shown [here](https://github.com/AFLplusplus/AFLplusplus/blob/master/llvm_mode/README.persistent_mode.md), new feature -> maybe need to build dev branch
 - [ ] minimze input file size
 
 
