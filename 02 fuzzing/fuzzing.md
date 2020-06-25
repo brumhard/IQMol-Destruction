@@ -29,8 +29,8 @@
 - fuzzing xyz files with just "a" as input finds unique hangs
 
 ## TODO
-- minimize harness
-- minimze input file size
-- read from stdin
+- [ ] minimize harness to point to one parser statically
+- [ ] harness read from stdin
+- [ ] minimze input file size
 
 
