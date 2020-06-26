@@ -20,7 +20,6 @@ int main(int argc, char **argv)
     {
         Base *parser = new Xyz;
         std::string inputBufString(reinterpret_cast<char const *>(buf));
-        std::cout << "input: " << inputBufString << "\n";
         QString input = QString::fromStdString(inputBufString);
         TextStream textStream(&input);
         parser->parse(textStream);
