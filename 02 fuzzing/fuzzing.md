@@ -32,7 +32,10 @@
 - [x] minimize harness to point to one parser statically
 - [x] deferred fork server & persistent mode
 - [ ] harness read from stdin
-- [ ] harness read from shared memory as shown [here](https://github.com/AFLplusplus/AFLplusplus/blob/master/llvm_mode/README.persistent_mode.md), new feature -> maybe need to build dev branch
+- [x] harness read from shared memory as shown [here](https://github.com/AFLplusplus/AFLplusplus/blob/master/llvm_mode/README.persistent_mode.md), new feature
+  - [x] -> use parser parse method directly with textstream
 - [ ] minimze input file size
+- [ ] parallelize with one asan build
+- [ ] multiple filetypes at once?
 
 

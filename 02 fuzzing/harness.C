@@ -1,4 +1,3 @@
-
 // harness for fuzzing of xyz files
 // replace parser variable with any other parser (found in ParseFile.C) to fuzz other formats
 
@@ -13,7 +12,6 @@ int main(int argc, char **argv)
     while (__AFL_LOOP(1000))
     {
         Base *parser = new Xyz;
-        // std::string inputBufString(reinterpret_cast<char const *>(buf));
         QString input = QString::fromStdString(argv[1]);
         parser->parseFile(input);
     }
