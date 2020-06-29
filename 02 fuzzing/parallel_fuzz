@@ -1,0 +1,9 @@
+# this doesnt work as a script
+# only stores the commands for fuzzing
+
+afl-fuzz -i in_qcin_min/ -o out_qcin_sync/ -m none -M qcinfuzz00 -- ./qcin @@
+afl-fuzz -i in_qcin_min/ -o out_qcin_sync/ -m none -S qcinfuzz01 -- ./qcin @@
+afl-fuzz -i in_qcin_min/ -o out_qcin_sync/ -m none -S qcinfuzz02 -- ./qcin_asan @@
+afl-fuzz -i in_qcin_min/ -o out_qcin_sync/ -m none -S qcinfuzz03 -- ./qcin_asan @@
+afl-fuzz -i in_qcin_min/ -o out_qcin_sync/ -m none -S qcinfuzz04 -x inp.dict -- ./1_exes/qcin @@
+afl-fuzz -i in_qcin_min/ -o out_qcin_sync/ -m none -S qcinfuzz05 -x inp.dict -- ./1_exes/qcin @@
